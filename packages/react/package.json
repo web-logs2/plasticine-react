@@ -29,8 +29,7 @@
     "dist"
   ],
   "keywords": [
-    "plasticine-react",
-    "jsx-runtime"
+    "plasticine-react"
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsup --watch",
