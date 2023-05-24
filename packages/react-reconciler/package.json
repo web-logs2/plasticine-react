@@ -1,0 +1,32 @@
+{
+  "name": "@plasticine-react/react-reconciler",
+  "version": "0.0.0",
+  "author": "Plasticine-Yang",
+  "description": "React 的虚拟 DOM 与真实宿主环境之间的渲染抽象",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "plasticine-react reconciler"
+  ],
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development tsup --watch",
+    "build": "cross-env NODE_ENV=production tsup --dts"
+  },
+  "dependencies": {
+    "@plasticine-react/shared": "workspace:*",
+    "@plasticine-react/types": "workspace:*"
+  }
+}
