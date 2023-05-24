@@ -2,7 +2,7 @@
   "name": "@plasticine-react/react",
   "version": "0.0.0",
   "author": "Plasticine-Yang",
-  "description": "jsx-runtime of plasticine-react",
+  "description": "React 核心框架实现",
   "type": "module",
   "license": "MIT",
   "main": "./dist/react/index.cjs",
