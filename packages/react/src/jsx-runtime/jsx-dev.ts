@@ -1,6 +1,6 @@
 import type { ReactElement, ReactElementConfig, ReactElementType } from '@plasticine-react/types'
 
-import { resolveJSXParams } from './helpers'
+import { resolveConfig } from './helpers'
 import { createReactElement } from './react-element'
 
 /**
@@ -14,7 +14,7 @@ import { createReactElement } from './react-element'
  * @param maybeChildren 传入的话则赋值到 props.children 中
  */
 export function jsxDEV(type: ReactElementType, config: ReactElementConfig, ...maybeChildren: ReactElement[]) {
-  const { key, ref, props } = resolveJSXParams(type, config, ...maybeChildren)
+  const { key, ref, props } = resolveConfig(config)
 
   if (key === null) {
     console.warn('创建 ReactElement 时未检测到 `key` 属性')

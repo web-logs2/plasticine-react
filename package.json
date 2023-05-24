@@ -26,6 +26,7 @@
     "@plasticine-yang/eslint-config-typescript": "^0.1.6",
     "@types/node": "^18.15.13",
     "commitizen": "^4.3.0",
+    "cross-env": "^7.0.3",
     "cz-git": "^1.6.1",
     "eslint": "^8.39.0",
     "husky": "^8.0.3",

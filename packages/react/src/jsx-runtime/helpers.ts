@@ -5,7 +5,6 @@ import type {
   ReactElementKey,
   ReactElementProps,
   ReactElementRef,
-  ReactElementType,
 } from '@plasticine-react/types'
 
 /**
@@ -16,9 +15,8 @@ import type {
  * ReactElementConfig - 用于作为 ReactElementProps 的值
  *
  * 但会对 `key` 和 `ref` 这两个特殊属性进行处理，不赋值到 props 中
- * @param maybeChildren 传入的话则赋值到 props.children 中
  */
-export function resolveJSXParams(type: ReactElementType, config: ReactElementConfig, ...maybeChildren: ReactElement[]) {
+export function resolveConfig(config: ReactElementConfig) {
   let key: ReactElementKey | null = null
   let ref: ReactElementRef | null = null
   const props: ReactElementProps = {}
@@ -41,20 +39,33 @@ export function resolveJSXParams(type: ReactElementType, config: ReactElementCon
     }
   }
 
-  // 在传入了 children 的情况下将其赋值给 props.children
-  // 如果只有一个 child，那么直接将该 child 赋值给 props.children
-  const maybeChildrenLength = maybeChildren.length
-  if (maybeChildrenLength) {
-    if (maybeChildrenLength === 1) {
-      props.children = maybeChildren[0]
-    } else {
-      props.children = maybeChildren
-    }
-  }
-
   return {
     key,
     ref,
     props,
   }
+}
+
+/**
+ * 有 children 时将其赋值到 props 上
+ * @param props
+ * @param maybeChildren 传入的话则赋值到 props.children 中
+ */
+export function resolveProps(props: ReactElementProps, ...maybeChildren: ReactElement[]) {
+  const resolvedProps = {
+    ...props,
+  }
+
+  // 在传入了 children 的情况下将其赋值给 props.children
+  // 如果只有一个 child，那么直接将该 child 赋值给 props.children
+  const maybeChildrenLength = maybeChildren.length
+  if (maybeChildrenLength) {
+    if (maybeChildrenLength === 1) {
+      resolvedProps.children = maybeChildren[0]
+    } else {
+      resolvedProps.children = maybeChildren
+    }
+  }
+
+  return resolvedProps
 }

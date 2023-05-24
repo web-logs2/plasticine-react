@@ -1,6 +1,6 @@
 import type { ReactElement, ReactElementConfig, ReactElementType } from '@plasticine-react/types'
 
-import { resolveJSXParams } from './helpers'
+import { resolveProps, resolveConfig } from './helpers'
 import { createReactElement } from './react-element'
 
 /**
@@ -14,7 +14,8 @@ import { createReactElement } from './react-element'
  * @param maybeChildren 传入的话则赋值到 props.children 中
  */
 export function jsx(type: ReactElementType, config: ReactElementConfig, ...maybeChildren: ReactElement[]) {
-  const { key, ref, props } = resolveJSXParams(type, config, ...maybeChildren)
+  const { key, ref, props } = resolveConfig(config)
+  const resolvedProps = resolveProps(props, ...maybeChildren)
 
-  return createReactElement(type, key, ref, props)
+  return createReactElement(type, key, ref, resolvedProps)
 }
