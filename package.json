@@ -9,6 +9,7 @@
     "build": "pnpm --filter './packages/**' --parallel build",
     "test": "vitest",
     "test:u": "vitest -u",
+    "play:jsx-runtime:dev": "pnpm -C playgrounds/jsx-runtime dev",
     "commit": "cz",
     "update-pkgs": "taze -wi",
     "prepare": "husky install"
