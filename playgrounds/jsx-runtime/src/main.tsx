@@ -1,6 +1,7 @@
 const foo = (
   <div id="foo" className="foo">
-    foo
+    <span>foo</span>
+    <span>bar</span>
   </div>
 )
 
