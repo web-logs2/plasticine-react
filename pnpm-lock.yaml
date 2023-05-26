@@ -65,6 +65,15 @@ importers:
         specifier: workspace:*
         version: link:../types
 
+  packages/react-reconciler:
+    dependencies:
+      '@plasticine-react/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@plasticine-react/types':
+        specifier: workspace:*
+        version: link:../types
+
   packages/shared: {}
 
   packages/types:
