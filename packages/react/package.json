@@ -33,7 +33,7 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsup --watch",
-    "build": "cross-env NODE_ENV=production tsup --dts"
+    "build": "cross-env NODE_ENV=production tsup --dts --minify"
   },
   "dependencies": {
     "@plasticine-react/shared": "workspace:*",
