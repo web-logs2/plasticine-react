@@ -6,17 +6,17 @@ import type {
   UpdateQueue,
 } from '@plasticine-react/types'
 
-import { WorkTagEnum } from './work-tag'
-import { FiberFlagEnum } from './fiber-flag'
+import { FiberFlagEnum } from './flag'
+import { FiberTagEnum } from './work-tag'
 
 /** Fiber 树中的普通节点 */
 class FiberNode {
   /**
    * FiberNode 的种类，其与 type 不同，type 指的是这个种类对应的宿主环境类型本身
    *
-   * 比如 workTag 为 HostComponent 的一个 div 元素，其 type 为 'div'
+   * 比如 tag 为 HostComponent 的一个 div 元素，其 type 为 'div'
    */
-  public workTag: WorkTagEnum
+  public tag: FiberTagEnum
 
   /**
    * 宿主环境类型本身
@@ -75,9 +75,9 @@ class FiberNode {
    */
   public stateNode: FiberRootNode | any | null
 
-  constructor(workTag: WorkTagEnum, pendingProps: ReactElementProps, key: ReactElementKey | null) {
+  constructor(tag: FiberTagEnum, pendingProps: ReactElementProps, key: ReactElementKey | null) {
     this.type = null
-    this.workTag = workTag
+    this.tag = tag
     this.key = key
     this.pendingProps = pendingProps
     this.memoizedProps = null
@@ -124,7 +124,7 @@ function createWorkInProgress(current: FiberNode, pendingProps: ReactElementProp
 
   if (wip === null) {
     // mount - 首次渲染时不存在 alternate
-    wip = new FiberNode(current.workTag, pendingProps, current.key)
+    wip = new FiberNode(current.tag, pendingProps, current.key)
     wip.stateNode = current.stateNode
     wip.alternate = current
     current.alternate = wip

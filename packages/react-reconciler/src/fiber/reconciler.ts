@@ -1,13 +1,13 @@
 import type { HostContainer, ReactElement } from '@plasticine-react/types'
 
-import { FiberNode, FiberRootNode } from './fiber'
-import { createUpdate, createUpdateQueue, enqueueUpdate } from './update'
-import { WorkTagEnum } from './work-tag'
-import { scheduleUpdateOnFiber } from './work-loop'
+import { FiberNode, FiberRootNode } from './node'
+import { createUpdate, createUpdateQueue, enqueueUpdate } from '../update'
+import { FiberTagEnum } from './work-tag'
+import { scheduleUpdateOnFiber } from '../work-loop'
 
 /** 关联 hostRootFiber 和 root & 为 hostRootFiber 创建 updateQueue */
 export function createContainer(container: HostContainer) {
-  const hostRootFiber = new FiberNode(WorkTagEnum.HostRoot, {}, null)
+  const hostRootFiber = new FiberNode(FiberTagEnum.HostRoot, {}, null)
   const root = new FiberRootNode(container, hostRootFiber)
 
   hostRootFiber.updateQueue = createUpdateQueue()

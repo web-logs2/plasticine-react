@@ -1,7 +1,7 @@
 /**
  * 工作单元 fiber 节点的种类
  */
-export enum WorkTagEnum {
+export enum FiberTagEnum {
   /**
    * 挂载的宿主节点
    *

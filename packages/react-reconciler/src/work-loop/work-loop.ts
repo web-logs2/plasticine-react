@@ -1,7 +1,7 @@
 import { beginWork } from './begin-work'
 import { completeWork } from './complete-work'
-import { FiberNode, FiberRootNode, createWorkInProgress } from './fiber'
-import { WorkTagEnum } from './work-tag'
+import { FiberNode, FiberRootNode, createWorkInProgress } from '../fiber'
+import { FiberTagEnum } from '../fiber'
 
 let workInProgress: FiberNode | null = null
 
@@ -31,7 +31,7 @@ function markUpdateFromFiberToRoot(fiberNode: FiberNode): FiberRootNode | null {
   }
 
   // hostRootFiber -> 返回其 stateNode 即为 FiberRootNode
-  if (node.workTag === WorkTagEnum.HostRoot) {
+  if (node.tag === FiberTagEnum.HostRoot) {
     return node.stateNode as FiberRootNode
   }
 
