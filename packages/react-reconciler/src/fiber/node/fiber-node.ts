@@ -1,13 +1,15 @@
 import type {
-  HostContainer,
+  ReactElement,
   ReactElementKey,
   ReactElementProps,
   ReactElementRef,
+  ReactTextNode,
   UpdateQueue,
 } from '@plasticine-react/types'
 
-import { FiberFlagEnum } from './flag'
-import { FiberTagEnum } from './work-tag'
+import { FiberFlagEnum } from '../flag'
+import { FiberTagEnum } from '../work-tag'
+import { FiberRootNode } from './fiber-root-node'
 
 /** Fiber 树中的普通节点 */
 class FiberNode {
@@ -51,6 +53,9 @@ class FiberNode {
    */
   public flags: FiberFlagEnum
 
+  /** 以该 FiberNode 为根节点的子树中所包含的所有 flags */
+  public subtreeFlags: FiberFlagEnum
+
   /** 关联对应的更新行为抽象 */
   public updateQueue: UpdateQueue<any> | null
 
@@ -85,6 +90,7 @@ class FiberNode {
     this.ref = null
     this.alternate = null
     this.flags = FiberFlagEnum.NoFlags
+    this.subtreeFlags = FiberFlagEnum.NoFlags
     this.updateQueue = null
 
     this.return = null
@@ -95,54 +101,29 @@ class FiberNode {
   }
 }
 
-/** Fiber 树的根节点 */
-class FiberRootNode {
-  public container: HostContainer
+/** 为 ReactElement 创建 FiberNode */
+function createFiberNodeFromElement(element: ReactElement): FiberNode | null {
+  const { key, props, type } = element
 
-  /** 指向当前在视图上的 hostRootFiber */
-  public current: FiberNode
+  let fiberTag: FiberTagEnum | null = null
 
-  /** 指向 render 阶段完成时的 hostRootFiber */
-  public finishedWork: FiberNode | null
-
-  constructor(container: HostContainer, hostRootFiber: FiberNode) {
-    this.container = container
-    this.current = hostRootFiber
-    this.finishedWork = null
-
-    hostRootFiber.stateNode = this
-  }
-}
-
-/**
- * 创建待更新的工作树
- * @param current 已渲染到视图中的 Fiber 树
- * @param pendingProps 待更新的 props
- */
-function createWorkInProgress(current: FiberNode, pendingProps: ReactElementProps): FiberNode {
-  let wip: FiberNode | null = current.alternate
-
-  if (wip === null) {
-    // mount - 首次渲染时不存在 alternate
-    wip = new FiberNode(current.tag, pendingProps, current.key)
-    wip.stateNode = current.stateNode
-    wip.alternate = current
-    current.alternate = wip
+  if (typeof type === 'string') {
+    fiberTag = FiberTagEnum.HostComponent
   } else {
-    // update
-    wip.pendingProps = pendingProps
-
-    // 清除副作用
-    wip.flags = FiberFlagEnum.NoFlags
+    if (__DEV__) {
+      console.warn(`尚未支持转换 ${type} 类型的 ReactElement 为 FiberNode`, element)
+    }
   }
 
-  wip.type = current.type
-  wip.updateQueue = current.updateQueue
-  wip.child = current.child
-  wip.memoizedProps = current.memoizedProps
-  wip.memoizedState = current.memoizedState
+  if (fiberTag !== null) {
+    return new FiberNode(fiberTag, props, key)
+  }
 
-  return wip as FiberNode
+  return null
 }
 
-export { FiberNode, FiberRootNode, createWorkInProgress }
+function createFiberNodeFromTextNode(textNode: ReactTextNode) {
+  return new FiberNode(FiberTagEnum.HostText, { textNodeContent: textNode }, null)
+}
+
+export { FiberNode, createFiberNodeFromElement, createFiberNodeFromTextNode }

@@ -1,3 +1,5 @@
+import type { ReactNode, ReactTextNode } from './react-node'
+
 export type ReactElementType = string
 export type ReactElementKey = string
 export type ReactElementRef = any
@@ -5,9 +7,12 @@ export type ReactElementRef = any
 /** 常规的 ReactElement props */
 export type ReactElementNormalProps = Record<string, any>
 
+export type ReactElementChildren = ReactNode | ReactNode[]
+
 /** 特殊的 ReactElement props - 比如 children */
 export type ReactElementSpecialProps = {
-  children?: ReactElement | ReactElement[]
+  children?: ReactElementChildren
+  textNodeContent?: ReactTextNode
 }
 export type ReactElementProps = ReactElementNormalProps & ReactElementSpecialProps
 

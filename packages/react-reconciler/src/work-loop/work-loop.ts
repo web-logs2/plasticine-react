@@ -1,7 +1,8 @@
+import type { HostConfig } from '@plasticine-react/types'
+
+import { FiberNode, FiberRootNode, FiberTagEnum, createWorkInProgress } from '../fiber'
 import { beginWork } from './begin-work'
 import { completeWork } from './complete-work'
-import { FiberNode, FiberRootNode, createWorkInProgress } from '../fiber'
-import { FiberTagEnum } from '../fiber'
 
 let workInProgress: FiberNode | null = null
 
@@ -10,11 +11,11 @@ let workInProgress: FiberNode | null = null
  *
  * 从传入的 FiberNode 出发，往上寻找到 FiberRootNode 后调用 renderRoot 开启调度
  */
-function scheduleUpdateOnFiber(fiberNode: FiberNode) {
+function scheduleUpdateOnFiber(fiberNode: FiberNode, hostConfig: HostConfig) {
   const root = markUpdateFromFiberToRoot(fiberNode)
 
   if (root) {
-    renderRoot(root)
+    renderRoot(root, hostConfig)
   }
 }
 
@@ -38,12 +39,12 @@ function markUpdateFromFiberToRoot(fiberNode: FiberNode): FiberRootNode | null {
   return null
 }
 
-function renderRoot(root: FiberRootNode) {
+function renderRoot(root: FiberRootNode, hostConfig: HostConfig) {
   prepareFreshStack(root)
 
   do {
     try {
-      workLoop()
+      workLoop(hostConfig)
       break
     } catch (error) {
       if (__DEV__) {
@@ -66,35 +67,35 @@ function prepareFreshStack(root: FiberRootNode) {
  *
  * 主要体现在为 workInProgress 树中的节点转变成 current 树中节点的过程中打上所需的 flags
  */
-function workLoop() {
+function workLoop(hostConfig: HostConfig) {
   while (workInProgress !== null) {
-    performUnitOfWork(workInProgress)
+    performUnitOfWork(workInProgress, hostConfig)
   }
 }
 
 /** 消费一个工作单元 */
-function performUnitOfWork(fiberNode: FiberNode) {
+function performUnitOfWork(fiberNode: FiberNode, hostConfig: HostConfig) {
   // 消费当前工作单元，并得到下一个工作单元
   const next = beginWork(fiberNode)
 
   // 当前工作单元消费完毕后可以更新其 memoizedProps
   fiberNode.memoizedProps = fiberNode.pendingProps
 
-  // 不存在下一个工作单元，说明递归已经无法再深入下去了，开始往兄弟节点走
+  // 不存在下一个工作单元，说明递归已经无法再深入下去了，对工作单元进行后置操作
   if (next === null) {
-    completeUnitOfWork(fiberNode)
+    completeUnitOfWork(fiberNode, hostConfig)
   } else {
     workInProgress = next
   }
 }
 
 /** 递阶段的任务已结束，开始进入归阶段继续寻找下一个工作单元 */
-function completeUnitOfWork(fiberNode: FiberNode) {
+function completeUnitOfWork(fiberNode: FiberNode, hostConfig: HostConfig) {
   let node: FiberNode | null = fiberNode
 
   do {
     // 消费归阶段的工作单元
-    completeWork(node)
+    completeWork(node, hostConfig)
 
     // 消费完后往其兄弟节点继续前进，使其兄弟节点作为下一个工作单元
     const sibling = node.sibling
