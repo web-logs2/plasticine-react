@@ -1,6 +1,13 @@
 import type { HostConfig } from '@plasticine-react/types'
 
-import { FiberNode, FiberRootNode, FiberTagEnum, createWorkInProgress } from '../fiber'
+import {
+  FiberFlagEnum,
+  FiberNode,
+  FiberRootNode,
+  FiberTagEnum,
+  MutationMaskFlags,
+  createWorkInProgress,
+} from '../fiber'
 import { beginWork } from './begin-work'
 import { completeWork } from './complete-work'
 
@@ -54,6 +61,12 @@ function renderRoot(root: FiberRootNode, hostConfig: HostConfig) {
     }
     // eslint-disable-next-line no-constant-condition
   } while (true)
+
+  const finishedWork = root.current.alternate
+  root.finishedWork = finishedWork
+
+  // 进入 commit 阶段
+  commitRoot(root)
 }
 
 function prepareFreshStack(root: FiberRootNode) {
@@ -109,6 +122,34 @@ function completeUnitOfWork(fiberNode: FiberNode, hostConfig: HostConfig) {
     node = node.return
     workInProgress = node
   } while (node !== null)
+}
+
+function commitRoot(root: FiberRootNode) {
+  const finishedWork = root.finishedWork
+
+  if (finishedWork === null) {
+    return
+  }
+
+  if (__DEV__) {
+    console.log('commit 阶段开始', finishedWork)
+  }
+
+  const subTreeHasEffect = (finishedWork.subtreeFlags & MutationMaskFlags) !== FiberFlagEnum.NoFlags
+  const rootHasEffect = (finishedWork.flags & MutationMaskFlags) !== FiberFlagEnum.NoFlags
+
+  if (subTreeHasEffect || rootHasEffect) {
+    // beforeMutation 子阶段
+    // mutation 子阶段
+
+    // mutation 子阶段完成后需要进行双缓存树的切换，将内存中处理好的 finishedWork 作为 current 树的根节点
+    root.current = finishedWork
+
+    // layout 子阶段
+  } else {
+    // 没有任何副作用要处理则直接更新双缓存树
+    root.current = finishedWork
+  }
 }
 
 export { scheduleUpdateOnFiber }

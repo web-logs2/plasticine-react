@@ -12,3 +12,6 @@ export enum FiberFlagEnum {
   /** 对 child 进行删除操作 */
   ChildDeletion = 0b0001000,
 }
+
+/** commit 阶段的 Mutation 子阶段中会处理的 flags */
+export const MutationMaskFlags = FiberFlagEnum.Placement | FiberFlagEnum.Update | FiberFlagEnum.ChildDeletion
