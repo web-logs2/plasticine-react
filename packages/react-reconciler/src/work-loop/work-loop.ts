@@ -10,6 +10,7 @@ import {
 } from '../fiber'
 import { beginWork } from './begin-work'
 import { completeWork } from './complete-work'
+import { commitMutationEffects } from '../commit-work'
 
 let workInProgress: FiberNode | null = null
 
@@ -66,7 +67,7 @@ function renderRoot(root: FiberRootNode, hostConfig: HostConfig) {
   root.finishedWork = finishedWork
 
   // 进入 commit 阶段
-  commitRoot(root)
+  commitRoot(root, hostConfig)
 }
 
 function prepareFreshStack(root: FiberRootNode) {
@@ -124,7 +125,7 @@ function completeUnitOfWork(fiberNode: FiberNode, hostConfig: HostConfig) {
   } while (node !== null)
 }
 
-function commitRoot(root: FiberRootNode) {
+function commitRoot(root: FiberRootNode, hostConfig: HostConfig) {
   const finishedWork = root.finishedWork
 
   if (finishedWork === null) {
@@ -140,7 +141,9 @@ function commitRoot(root: FiberRootNode) {
 
   if (subTreeHasEffect || rootHasEffect) {
     // beforeMutation 子阶段
+
     // mutation 子阶段
+    commitMutationEffects(finishedWork, hostConfig)
 
     // mutation 子阶段完成后需要进行双缓存树的切换，将内存中处理好的 finishedWork 作为 current 树的根节点
     root.current = finishedWork

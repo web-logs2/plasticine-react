@@ -13,4 +13,7 @@ export interface HostConfig<HostComponent = any, HostText = any> {
 
   /** 插入元素 */
   appendInitialChild: (parent: HostComponent, child: HostComponent | HostText) => void
+
+  /** 插入元素到容器节点中 */
+  appendChildToContainer: (container: HostContainer, child: HostComponent | HostText) => void
 }
